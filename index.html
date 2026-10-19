@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Рассади по местам</title>
+<title>Хэллоуин: Найди пару</title>
 <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,10 +30,10 @@ body {
 
 .game-container {
     background: rgba(25, 0, 40, 0.93);
-    padding: 16px;
+    padding: 18px;
     border-radius: 20px;
     box-shadow: 0 0 50px rgba(0,0,0,0.9), inset 0 0 25px rgba(242,109,33,0.4);
-    max-width: 640px; width: 100%;
+    max-width: 520px; width: 100%;
     backdrop-filter: blur(6px);
     border: 3px solid #f26d21; z-index: 1;
     max-height: 96vh; overflow-y: auto;
@@ -41,9 +41,9 @@ body {
 }
 
 h1 {
-    color: #f26d21; font-size: 22px; margin-bottom: 4px;
+    color: #f26d21; font-size: 24px; margin-bottom: 6px;
     text-shadow: 2px 2px 0 #572a7c, 4px 4px 0 #000;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
     animation: glow 3s ease-in-out infinite alternate;
 }
 @keyframes glow {
@@ -52,195 +52,42 @@ h1 {
 }
 
 .subtitle {
-    color: #ccc; font-size: 11px; letter-spacing: 0.5px;
-    margin-bottom: 10px;
+    color: #ccc; font-size: 12px; letter-spacing: 1px;
+    margin-bottom: 14px;
 }
 
-.rules-box {
-    background: rgba(87,42,124,0.35);
+.start-screen {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 14px; padding: 10px;
+    animation: fadeIn 0.6s ease;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+.controls-box {
+    background: rgba(87,42,124,0.4);
     border: 2px dashed #f26d21;
-    border-radius: 12px;
-    padding: 10px 14px;
-    margin-bottom: 12px;
+    border-radius: 14px;
+    padding: 12px 16px;
+    display: flex; flex-direction: column; gap: 6px;
+    max-width: 380px;
     text-align: left;
 }
-.rules-box .rules-title {
-    color: #f26d21; font-size: 12px;
-    letter-spacing: 2px; margin-bottom: 6px;
-    text-shadow: 1px 1px 0 #000;
+.controls-box .ctrl-title {
+    color: #f26d21; font-size: 13px;
+    letter-spacing: 1px; margin-bottom: 4px;
     text-align: center;
 }
-.rules-box .rule {
-    color: #fff; font-size: 11px;
-    line-height: 1.6; letter-spacing: 0.3px;
-    padding-left: 14px;
-    position: relative;
+.controls-box .ctrl-line {
+    color: #fff; font-size: 12px;
+    line-height: 1.5;
 }
-.rules-box .rule::before {
-    content: '•';
-    position: absolute;
-    left: 0;
-    color: #f26d21;
-    font-weight: bold;
-}
+.controls-box .ctrl-line span { color: #f26d21; }
 
-/* Сетка столов + одиночное место */
-.tables-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-/* Одиночное место для Тыквы */
-.solo-place {
-    grid-column: 1 / -1;
-    background: rgba(15, 2, 25, 0.85);
-    border: 3px dashed rgba(242,109,33,0.5);
-    border-radius: 14px;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    transition: all 0.25s ease;
-    margin-bottom: 12px;
-}
-
-.table {
-    background: rgba(15, 2, 25, 0.85);
-    border: 3px dashed rgba(242,109,33,0.5);
-    border-radius: 14px;
-    padding: 10px 8px;
-    min-height: 120px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    transition: all 0.25s ease;
-    cursor: pointer;
-}
-
-.table-label {
-    color: #f26d21;
-    font-size: 11px;
-    letter-spacing: 1px;
-    text-align: center;
-    margin-bottom: 4px;
-}
-.table-seats {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.seat {
-    width: 50px; height: 50px;
-    border-radius: 50%;
-    border: 2px dashed rgba(242,109,33,0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 26px;
-    background: rgba(87,42,124,0.25);
-    transition: all 0.2s ease;
-    position: relative;
-}
-.seat.filled {
-    border-style: solid;
-    border-color: #f26d21;
-    background: rgba(242,109,33,0.15);
-}
-.seat.correct {
-    border-color: #4caf50;
-    box-shadow: 0 0 12px rgba(76,175,80,0.7);
-}
-.seat.wrong {
-    border-color: #ff3333;
-    box-shadow: 0 0 12px rgba(255,51,51,0.7);
-    animation: shake 0.4s ease;
-}
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-4px); }
-    75% { transform: translateX(4px); }
-}
-
-.char-panel-title {
-    color: #f26d21;
-    font-size: 11px;
-    letter-spacing: 2px;
-    margin-bottom: 6px;
-    text-shadow: 1px 1px 0 #000;
-}
-.char-panel {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 6px;
-    padding: 8px;
-    background: rgba(87,42,124,0.3);
-    border: 2px solid rgba(242,109,33,0.4);
-    border-radius: 12px;
-    min-height: 50px;
-}
-
-.char {
-    background: rgba(242, 109, 33, 0.2);
-    border: 2px solid #f26d21;
-    border-radius: 10px;
-    padding: 6px 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    min-width: 52px;
-}
-.char:hover {
-    background: rgba(242,109,33,0.4);
-    transform: translateY(-2px);
-    box-shadow: 0 0 12px rgba(242,109,33,0.6);
-}
-.char.selected {
-    background: rgba(242,109,33,0.5);
-    border-color: #fff;
-    box-shadow: 0 0 15px #fff;
-    transform: scale(1.06);
-}
-.char.placed { display: none; }
-.char .char-emoji {
-    font-size: 22px;
-    line-height: 1;
-}
-.char .char-name {
-    color: #fff;
-    font-size: 8px;
-    letter-spacing: 0.3px;
-    text-shadow: 1px 1px 0 #000;
-    text-align: center;
-}
-
-.hint-msg {
-    min-height: 18px;
-    font-size: 11px;
-    letter-spacing: 0.5px;
-    margin-top: 8px;
-    color: #f26d21;
-    text-shadow: 1px 1px 0 #000;
-    transition: opacity 0.3s ease;
-}
-.hint-msg.good { color: #4caf50; text-shadow: 0 0 8px #4caf50, 1px 1px 0 #000; }
-.hint-msg.warn { color: #ff5555; text-shadow: 0 0 8px #ff5555, 1px 1px 0 #000; }
-
-.check-btn {
+.btn {
     font-family: 'Russo One', sans-serif;
-    font-size: 13px;
+    font-size: 14px;
     background: #572a7c;
     color: #f26d21;
     border: 3px solid #f26d21;
@@ -248,58 +95,167 @@ h1 {
     border-radius: 12px;
     cursor: pointer;
     letter-spacing: 1px;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
     text-shadow: 1px 1px 0 #000;
-    margin-top: 10px;
+    touch-action: manipulation;
+    margin-top: 4px;
 }
-.check-btn:hover:not(:disabled) {
+.btn:hover {
     background: #f26d21;
     color: #572a7c;
     border-color: #572a7c;
-    transform: scale(1.05);
+    transform: scale(1.06);
     box-shadow: 0 0 20px rgba(242,109,33,0.7);
 }
-.check-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
+.btn:active { transform: scale(0.95); }
+
+.game-screen {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    animation: fadeIn 0.5s ease;
+}
+
+.hud {
+    display: flex;
+    gap: 6px;
+    font-size: 11px;
+    color: #fff;
+    letter-spacing: 1px;
+}
+.hud-item {
+    background: rgba(87,42,124,0.5);
+    border: 2px solid rgba(242,109,33,0.5);
+    border-radius: 8px;
+    padding: 5px 6px;
+    flex: 1;
+    text-align: center;
+}
+.hud-item b { color: #f26d21; }
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+}
+
+.card {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 10px;
+    cursor: pointer;
+    perspective: 600px;
+}
+
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+.card.flipped .card-inner {
+    transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border: 3px solid;
+    font-size: 36px;
+    line-height: 1;
+}
+
+.card-back {
+    background: linear-gradient(135deg, #572a7c 0%, #2a0a38 100%);
+    border-color: #f26d21;
+    font-size: 28px;
+    color: #f26d21;
+    text-shadow: 0 0 8px #f26d21;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.6);
+}
+.card-back::after {
+    content: '?';
+    font-family: 'Russo One', sans-serif;
+    font-size: 32px;
+    text-shadow: 0 0 10px #f26d21, 2px 2px 0 #000;
+}
+
+.card-front {
+    background: linear-gradient(135deg, #f26d21 0%, #d95d14 100%);
+    border-color: #ffcc00;
+    transform: rotateY(180deg);
+    box-shadow: inset 0 0 15px rgba(255,255,255,0.2);
+}
+
+.card.matched .card-front {
+    background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+    border-color: #b8ffbb;
+    box-shadow: 0 0 20px rgba(76,175,80,0.8);
+    animation: matchPulse 0.5s ease;
+}
+@keyframes matchPulse {
+    0% { transform: rotateY(180deg) scale(1); }
+    50% { transform: rotateY(180deg) scale(1.12); }
+    100% { transform: rotateY(180deg) scale(1); }
+}
+
+.card.wrong .card-front {
+    background: linear-gradient(135deg, #ff3333 0%, #8b0000 100%);
+    border-color: #ffb8b8;
+    animation: wrongShake 0.4s ease;
+}
+@keyframes wrongShake {
+    0%, 100% { transform: rotateY(180deg) translateX(0); }
+    25% { transform: rotateY(180deg) translateX(-4px); }
+    75% { transform: rotateY(180deg) translateX(4px); }
 }
 
 .end-screen {
     display: none;
     flex-direction: column;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
     padding: 20px 10px;
     animation: fadeIn 0.8s ease;
 }
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
-}
-.end-screen h1 { font-size: 20px; line-height: 1.3; }
+.end-screen h1 { font-size: 22px; line-height: 1.3; }
 .end-screen p {
     color: #fff; font-size: 13px;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
     text-shadow: 1px 1px 2px #000;
     text-align: center;
 }
-.end-screen p.sub { color: #ccc; font-size: 11px; }
+.end-screen p.sub { color: #ccc; font-size: 12px; }
+.end-screen .score-big {
+    color: #f26d21;
+    font-size: 30px;
+    text-shadow: 0 0 20px #f26d21, 2px 2px 0 #000;
+    margin: 4px 0;
+}
 .end-screen p.final {
     color: #f26d21; font-size: 13px;
     text-shadow: 1px 1px 0 #000, 0 0 10px #f26d21;
 }
 
-@media (max-width: 600px) {
-    h1 { font-size: 18px; }
-    .rules-box { padding: 8px 10px; }
-    .rules-box .rule { font-size: 10px; }
-    .table { min-height: 100px; padding: 8px 6px; }
-    .table-label { font-size: 10px; }
-    .seat { width: 42px; height: 42px; font-size: 22px; }
-    .char { padding: 5px 6px; min-width: 46px; }
-    .char .char-emoji { font-size: 18px; }
-    .char .char-name { font-size: 7px; }
-    .check-btn { font-size: 12px; padding: 8px 18px; }
+@media (max-width: 500px) {
+    h1 { font-size: 20px; }
+    .cards-grid { gap: 6px; }
+    .card-front, .card-back { font-size: 28px; }
+    .card-back::after { font-size: 24px; }
+    .hud { font-size: 10px; }
+    .end-screen h1 { font-size: 18px; }
+    .end-screen .score-big { font-size: 26px; }
 }
 </style>
 </head>
@@ -309,311 +265,242 @@ h1 {
 
 <div class="game-container" id="game-container">
 
-    <div id="main-screen">
-        <h1>Рассади по местам</h1>
-        <p class="subtitle">4 стола по 2 места + отдельное место для Тыквы</p>
-
-        <div class="rules-box">
-            <div class="rules-title">ПОДСКАЗКИ</div>
-            <div class="rule">Дракула и Ведьма — лучшие друзья</div>
-            <div class="rule">Волк дружит с Призраком</div>
-            <div class="rule">Зомби и Клоун — соседи по несчастью</div>
-            <div class="rule">Скелет ненавидит Клоунов</div>
-            <div class="rule">Тыква не любит сидеть вдвоём</div>
+    <div class="start-screen" id="start-screen">
+        <h1>Найди пару</h1>
+        <p class="subtitle">Пары не стоят рядом — проверь память</p>
+        <div class="controls-box">
+            <div class="ctrl-title">КАК ИГРАТЬ</div>
+            <div class="ctrl-line"><span>1.</span> Нажми на карточку — она перевернётся</div>
+            <div class="ctrl-line"><span>2.</span> Открой вторую и найди пару</div>
+            <div class="ctrl-line"><span>3.</span> Если не совпали — закроются через секунду</div>
+            <div class="ctrl-line"><span>4.</span> Пары специально не стоят рядом</div>
         </div>
+        <button class="btn" onclick="startGame()">Начать игру</button>
+    </div>
 
-        <div class="tables-grid" id="tables"></div>
-
-        <div class="solo-place" id="solo-place"></div>
-
-        <div class="char-panel-title">ПЕРСОНАЖИ</div>
-        <div class="char-panel" id="char-panel"></div>
-
-        <button class="check-btn" id="check-btn" onclick="checkAll()" disabled>Проверить</button>
-
-        <div class="hint-msg" id="hint-msg"></div>
+    <div class="game-screen" id="game-screen">
+        <div class="hud">
+            <div class="hud-item">Ходы: <b><span id="hud-moves">0</span></b></div>
+            <div class="hud-item">Найдено: <b><span id="hud-pairs">0</span>/8</b></div>
+        </div>
+        <div class="cards-grid" id="cards-grid"></div>
     </div>
 
     <div class="end-screen" id="end-screen">
-        <h1>ВСЕ РАССАЖЕНЫ ВЕРНО! 🎃</h1>
-        <p class="sub">Ты справился с логической загадкой</p>
+        <h1>ВСЕ ПАРЫ НАЙДЕНЫ! 🎃</h1>
+        <p class="sub">Ты справился с хэллоуинской памятью</p>
+        <div class="score-big" id="final-moves">0 ходов</div>
         <p class="final">Не забудь отправить скрин в группу!</p>
     </div>
 
 </div>
 
 <script>
-    // ===== ПЕРСОНАЖИ =====
-    const CHARACTERS = [
-        { id: 'pumpkin',  emoji: '🎃', name: 'Тыква' },
-        { id: 'wolf',     emoji: '🐺', name: 'Волк' },
-        { id: 'zombie',   emoji: '🧟‍♂️', name: 'Зомби' },
-        { id: 'skeleton', emoji: '💀', name: 'Скелет' },
-        { id: 'clown',    emoji: '🤡', name: 'Клоун' },
-        { id: 'ghost',    emoji: '👻', name: 'Призрак' },
-        { id: 'vampire',  emoji: '🧛‍♂️', name: 'Дракула' },
-        { id: 'witch',    emoji: '🧙‍♀️', name: 'Ведьма' }
-    ];
+    // ===== НАСТРОЙКИ =====
+    const COLS = 4;
+    const ROWS = 4;
+    const EMOJIS = ['🎃', '👻', '💀', '🧟‍♂️', '🧛‍♂️', '🧙‍♀️', '🐺', '🤡'];
+    const PAIRS = EMOJIS.length;
+    const MISMATCH_DELAY = 800;
+    const MATCH_DELAY = 400;
 
-    // ===== 4 СТОЛА по 2 места + одиночное место =====
-    // Правильное решение:
-    //   Стол 1: Дракула + Ведьма
-    //   Стол 2: Волк + Призрак
-    //   Стол 3: Зомби + Клоун
-    //   Стол 4: Скелет + (пусто) — он ненавидит Клоуна, а друзей у него нет
-    //   Место 5: Тыква (одна) — не любит сидеть вдвоём
-    const TABLES = [
-        { id: 't1', label: 'Стол 1', correct: ['vampire', 'witch'] },
-        { id: 't2', label: 'Стол 2', correct: ['wolf', 'ghost'] },
-        { id: 't3', label: 'Стол 3', correct: ['zombie', 'clown'] },
-        { id: 't4', label: 'Стол 4', correct: ['skeleton'] }
-    ];
-
-    const SOLO_ID = 'solo';
-    const SOLO_CORRECT = 'pumpkin';
-
-    let selectedChar = null;
-    let seats = {};
+    // ===== СОСТОЯНИЕ =====
+    let cards = [];
+    let firstCard = null;
+    let secondCard = null;
+    let moves = 0;
+    let pairsFound = 0;
     let gameActive = false;
+    let lock = false;
+
+    const gridEl = document.getElementById('cards-grid');
 
     // ===== СТАРТ =====
-    function init() {
-        selectedChar = null;
-        seats = {};
-        TABLES.forEach(t => {
-            seats[t.id + '_0'] = null;
-            seats[t.id + '_1'] = null;
+    function startGame() {
+        let deck = [];
+        EMOJIS.forEach((emoji, idx) => {
+            deck.push({ emoji, id: idx, matched: false, flipped: false });
+            deck.push({ emoji, id: idx, matched: false, flipped: false });
         });
-        seats[SOLO_ID] = null;
+
+        // 1. Перемешиваем
+        deck = shuffle(deck);
+
+        // 2. Разводим пары, чтобы не стояли рядом
+        deck = separatePairs(deck);
+
+        cards = deck;
+        firstCard = null;
+        secondCard = null;
+        moves = 0;
+        pairsFound = 0;
+        lock = false;
         gameActive = true;
 
+        document.getElementById('start-screen').style.display = 'none';
         document.getElementById('end-screen').style.display = 'none';
-        document.getElementById('main-screen').style.display = 'block';
+        document.getElementById('game-screen').style.display = 'flex';
+        document.getElementById('hud-moves').textContent = '0';
+        document.getElementById('hud-pairs').textContent = '0';
 
-        renderTables();
-        renderSolo();
-        renderChars();
-        updateCheckButton();
-        showHint('Кликни персонажа, потом на свободное место', '');
+        renderGrid();
     }
 
-    // ===== СТОЛЫ =====
-    function renderTables() {
-        const container = document.getElementById('tables');
-        container.innerHTML = '';
-
-        TABLES.forEach(table => {
-            const el = document.createElement('div');
-            el.className = 'table';
-            el.dataset.tableId = table.id;
-
-            const label = document.createElement('div');
-            label.className = 'table-label';
-            label.textContent = table.label;
-            el.appendChild(label);
-
-            const seatsRow = document.createElement('div');
-            seatsRow.className = 'table-seats';
-
-            for (let i = 0; i < 2; i++) {
-                const seatId = table.id + '_' + i;
-                const seatEl = createSeat(seatId);
-                seatsRow.appendChild(seatEl);
-            }
-
-            el.appendChild(seatsRow);
-            container.appendChild(el);
-        });
-    }
-
-    // ===== ОДИНОЧНОЕ МЕСТО =====
-    function renderSolo() {
-        const el = document.getElementById('solo-place');
-        el.innerHTML = '';
-
-        const label = document.createElement('div');
-        label.className = 'table-label';
-        label.textContent = 'Место 5 — особое';
-        el.appendChild(label);
-
-        const seatsRow = document.createElement('div');
-        seatsRow.className = 'table-seats';
-
-        const seatEl = createSeat(SOLO_ID);
-        seatsRow.appendChild(seatEl);
-
-        el.appendChild(seatsRow);
-    }
-
-    // ===== СОЗДАНИЕ МЕСТА =====
-    function createSeat(seatId) {
-        const seatEl = document.createElement('div');
-        seatEl.className = 'seat';
-        seatEl.dataset.seatId = seatId;
-
-        const charId = seats[seatId];
-        if (charId) {
-            const char = CHARACTERS.find(c => c.id === charId);
-            seatEl.classList.add('filled');
-            seatEl.textContent = char.emoji;
+    // ===== ПЕРЕМЕШИВАНИЕ =====
+    function shuffle(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
         }
+        return a;
+    }
 
-        seatEl.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (!gameActive) return;
-            if (seats[seatId]) {
-                removeFromSeat(seatId);
-            } else {
-                if (!selectedChar) {
-                    showHint('Сначала выбери персонажа внизу', 'warn');
-                    return;
+    // ===== ПРОВЕРКА «РЯДОМ ЛИ» =====
+    function isNeighbor(indexA, indexB) {
+        const rowA = Math.floor(indexA / COLS);
+        const colA = indexA % COLS;
+        const rowB = Math.floor(indexB / COLS);
+        const colB = indexB % COLS;
+        const dRow = Math.abs(rowA - rowB);
+        const dCol = Math.abs(colA - colB);
+        // Рядом, если расстояние по горизонтали ИЛИ вертикали = 1 (в одной строке/столбце)
+        return (dRow === 0 && dCol === 1) || (dCol === 0 && dRow === 1);
+    }
+
+    // ===== РАЗВОДИМ ПАРЫ =====
+    // Пока есть пары, стоящие рядом — меняем одну из них с другой карточкой
+    function separatePairs(deck) {
+        let result = [...deck];
+        let maxIterations = 500;
+
+        while (maxIterations-- > 0) {
+            let conflicts = [];
+
+            // Находим все пары, которые стоят рядом
+            for (let i = 0; i < result.length; i++) {
+                for (let j = i + 1; j < result.length; j++) {
+                    if (result[i].id === result[j].id && isNeighbor(i, j)) {
+                        conflicts.push([i, j]);
+                    }
                 }
-                placeChar(selectedChar, seatId);
-                selectedChar = null;
-                updateSelectedStyling();
             }
-        });
 
-        return seatEl;
+            if (conflicts.length === 0) break;
+
+            // Берём первый конфликт и меняем одну карточку с кем-то другим
+            const [i, j] = conflicts[0];
+            const swapWith = Math.floor(Math.random() * result.length);
+
+            // Не меняем с самой собой и не меняем, чтобы не создать новую пару
+            if (swapWith !== i && swapWith !== j) {
+                [result[i], result[swapWith]] = [result[swapWith], result[i]];
+            }
+        }
+
+        return result;
     }
 
-    // ===== ПЕРСОНАЖИ =====
-    function renderChars() {
-        const container = document.getElementById('char-panel');
-        container.innerHTML = '';
+    // ===== ОТРИСОВКА =====
+    function renderGrid() {
+        gridEl.innerHTML = '';
+        cards.forEach((card, idx) => {
+            const cardEl = document.createElement('div');
+            cardEl.className = 'card';
+            cardEl.dataset.index = idx;
 
-        if (!container.dataset.order) {
-            const shuffled = [...CHARACTERS].sort(() => Math.random() - 0.5);
-            container.dataset.order = JSON.stringify(shuffled.map(c => c.id));
-        }
-        const order = JSON.parse(container.dataset.order);
-        const placedIds = Object.values(seats).filter(v => v !== null);
+            if (card.flipped) cardEl.classList.add('flipped');
+            if (card.matched) cardEl.classList.add('matched');
 
-        order.forEach(id => {
-            if (placedIds.includes(id)) return;
-
-            const char = CHARACTERS.find(c => c.id === id);
-            const el = document.createElement('div');
-            el.className = 'char';
-            el.dataset.charId = char.id;
-            if (selectedChar === char.id) el.classList.add('selected');
-
-            el.innerHTML = `
-                <div class="char-emoji">${char.emoji}</div>
-                <div class="char-name">${char.name}</div>
+            cardEl.innerHTML = `
+                <div class="card-inner">
+                    <div class="card-back"></div>
+                    <div class="card-front">${card.emoji}</div>
+                </div>
             `;
 
-            el.addEventListener('click', () => {
-                if (!gameActive) return;
-                if (selectedChar === char.id) selectedChar = null;
-                else selectedChar = char.id;
-                updateSelectedStyling();
-                showHint('Теперь кликни по свободному месту', '');
-            });
-
-            container.appendChild(el);
+            cardEl.addEventListener('click', () => handleCardClick(idx));
+            gridEl.appendChild(cardEl);
         });
     }
 
-    function updateSelectedStyling() {
-        document.querySelectorAll('.char').forEach(el => {
-            el.classList.toggle('selected', el.dataset.charId === selectedChar);
-        });
-    }
+    // ===== КЛИК =====
+    function handleCardClick(idx) {
+        if (!gameActive || lock) return;
+        const card = cards[idx];
+        if (card.flipped || card.matched) return;
 
-    // ===== ПОСАДИТЬ / УБРАТЬ =====
-    function placeChar(charId, seatId) {
-        if (!gameActive) return;
-        if (seats[seatId]) return;
-        seats[seatId] = charId;
-        refreshAll();
-    }
-
-    function removeFromSeat(seatId) {
-        if (!gameActive) return;
-        seats[seatId] = null;
-        refreshAll();
-    }
-
-    function refreshAll() {
-        renderTables();
-        renderSolo();
-        renderChars();
-        updateCheckButton();
-    }
-
-    // ===== АКТИВНОСТЬ КНОПКИ =====
-    function updateCheckButton() {
-        const placedCount = Object.values(seats).filter(v => v !== null).length;
-        document.getElementById('check-btn').disabled = placedCount !== CHARACTERS.length;
-    }
-
-    // ===== ПРОВЕРКА =====
-    function checkAll() {
-        if (!gameActive) return;
-
-        let allCorrect = true;
-
-        // Проверка столов 1–4
-        TABLES.forEach(table => {
-            for (let i = 0; i < 2; i++) {
-                const seatId = table.id + '_' + i;
-                const charId = seats[seatId];
-                const seatEl = document.querySelector(`.seat[data-seat-id="${seatId}"]`);
-                if (!seatEl) continue;
-                seatEl.classList.remove('correct', 'wrong');
-
-                if (charId && table.correct.includes(charId)) {
-                    seatEl.classList.add('correct');
-                } else if (charId) {
-                    seatEl.classList.add('wrong');
-                    allCorrect = false;
-                }
-            }
-        });
-
-        // Проверка одиночного места
-        const soloSeatEl = document.querySelector(`.seat[data-seat-id="${SOLO_ID}"]`);
-        if (soloSeatEl) {
-            soloSeatEl.classList.remove('correct', 'wrong');
-            if (seats[SOLO_ID] === SOLO_CORRECT) {
-                soloSeatEl.classList.add('correct');
-            } else if (seats[SOLO_ID]) {
-                soloSeatEl.classList.add('wrong');
-                allCorrect = false;
-            } else {
-                allCorrect = false;
-            }
+        if (firstCard === null) {
+            firstCard = idx;
+            card.flipped = true;
+            gridEl.querySelector(`.card[data-index="${idx}"]`).classList.add('flipped');
+            return;
         }
 
-        if (allCorrect) {
-            showHint('Всё верно!', 'good');
-            gameActive = false;
+        secondCard = idx;
+        card.flipped = true;
+        gridEl.querySelector(`.card[data-index="${idx}"]`).classList.add('flipped');
+        moves++;
+        document.getElementById('hud-moves').textContent = moves;
+        checkMatch();
+    }
+
+    // ===== ПРОВЕРКА СОВПАДЕНИЯ =====
+    function checkMatch() {
+        const card1 = cards[firstCard];
+        const card2 = cards[secondCard];
+
+        const el1 = gridEl.querySelector(`.card[data-index="${firstCard}"]`);
+        const el2 = gridEl.querySelector(`.card[data-index="${secondCard}"]`);
+
+        if (card1.id === card2.id) {
+            lock = true;
+            card1.matched = true;
+            card2.matched = true;
+            pairsFound++;
+            document.getElementById('hud-pairs').textContent = pairsFound;
+
+            el1.classList.add('matched');
+            el2.classList.add('matched');
+
             setTimeout(() => {
-                document.getElementById('main-screen').style.display = 'none';
-                document.getElementById('end-screen').style.display = 'flex';
-            }, 900);
+                firstCard = null;
+                secondCard = null;
+                lock = false;
+                if (pairsFound === PAIRS) winGame();
+            }, MATCH_DELAY);
+
         } else {
-            showHint('Не всё верно — переставь красных', 'warn');
+            lock = true;
+            el1.classList.add('wrong');
+            el2.classList.add('wrong');
+
             setTimeout(() => {
-                document.querySelectorAll('.seat').forEach(el => {
-                    el.classList.remove('correct', 'wrong');
-                });
-            }, 2000);
+                el1.classList.remove('flipped', 'wrong');
+                el2.classList.remove('flipped', 'wrong');
+                card1.flipped = false;
+                card2.flipped = false;
+                firstCard = null;
+                secondCard = null;
+                lock = false;
+            }, MISMATCH_DELAY);
         }
     }
 
-    // ===== ПОДСКАЗКА =====
-    let hintTimeout = null;
-    function showHint(text, type) {
-        const el = document.getElementById('hint-msg');
-        el.textContent = text;
-        el.className = 'hint-msg ' + (type || '');
-        if (hintTimeout) clearTimeout(hintTimeout);
-        hintTimeout = setTimeout(() => { el.textContent = ''; }, 2500);
+    // ===== ПОБЕДА =====
+    function winGame() {
+        gameActive = false;
+        document.getElementById('final-moves').textContent = moves + ' ходов';
+        setTimeout(() => {
+            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('end-screen').style.display = 'flex';
+        }, 600);
     }
 
-    window.onload = init;
+    window.onload = () => {
+        document.getElementById('game-screen').style.display = 'none';
+        document.getElementById('end-screen').style.display = 'none';
+    };
 </script>
 
 </body>
