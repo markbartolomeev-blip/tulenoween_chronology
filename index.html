@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Хэллоуин: Свари зелье</title>
+<title>Хэллоуин: Угадай слово</title>
 <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,10 +30,10 @@ body {
 
 .game-container {
     background: rgba(25, 0, 40, 0.93);
-    padding: 18px;
+    padding: 20px 18px;
     border-radius: 20px;
     box-shadow: 0 0 50px rgba(0,0,0,0.9), inset 0 0 25px rgba(242,109,33,0.4);
-    max-width: 560px; width: 100%;
+    max-width: 500px; width: 100%;
     backdrop-filter: blur(6px);
     border: 3px solid #f26d21; z-index: 1;
     max-height: 96vh; overflow-y: auto;
@@ -53,9 +53,10 @@ h1 {
 
 .subtitle {
     color: #ccc; font-size: 12px; letter-spacing: 1px;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
 }
 
+/* Стартовый экран */
 .start-screen {
     display: flex; flex-direction: column; align-items: center;
     gap: 14px; padding: 10px;
@@ -71,7 +72,7 @@ h1 {
     border-radius: 14px;
     padding: 12px 16px;
     display: flex; flex-direction: column; gap: 6px;
-    max-width: 420px;
+    max-width: 400px;
     text-align: left;
 }
 .controls-box .ctrl-title {
@@ -100,74 +101,33 @@ h1 {
     touch-action: manipulation;
     margin-top: 4px;
 }
-.btn:hover {
+.btn:hover:not(:disabled) {
     background: #f26d21;
     color: #572a7c;
     border-color: #572a7c;
     transform: scale(1.06);
     box-shadow: 0 0 20px rgba(242,109,33,0.7);
 }
-.btn:active { transform: scale(0.95); }
+.btn:active:not(:disabled) { transform: scale(0.95); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
+/* Игровой экран */
 .game-screen {
     display: none;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     animation: fadeIn 0.5s ease;
 }
 
-/* Таймер-полоса */
-.timer-bar-wrap {
-    position: relative;
-    width: 100%;
-    height: 22px;
-    background: rgba(15, 2, 25, 0.9);
-    border: 2px solid #f26d21;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
-}
-.timer-bar {
-    position: absolute;
-    top: 0; left: 0;
-    height: 100%;
-    width: 100%;
-    background: linear-gradient(90deg, #f26d21 0%, #ffcc00 50%, #ffeb3b 100%);
-    box-shadow: 0 0 15px rgba(242,109,33,0.8);
-    transition: width 1s linear;
-    border-radius: 10px 0 0 10px;
-}
-.timer-bar.danger {
-    background: linear-gradient(90deg, #ff3333 0%, #ff5555 50%, #ff8888 100%);
-    box-shadow: 0 0 20px rgba(255,51,51,0.9);
-    animation: barPulse 0.5s infinite alternate;
-}
-@keyframes barPulse {
-    from { opacity: 1; }
-    to { opacity: 0.6; }
-}
-.timer-text {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 11px;
-    letter-spacing: 1px;
-    text-shadow: 1px 1px 2px #000, 0 0 4px #000;
-    z-index: 2;
-    font-weight: bold;
-}
-
-.round-info {
+/* HUD */
+.hud {
     display: flex;
     gap: 6px;
     font-size: 11px;
     color: #fff;
     letter-spacing: 1px;
 }
-.round-item {
+.hud-item {
     background: rgba(87,42,124,0.5);
     border: 2px solid rgba(242,109,33,0.5);
     border-radius: 8px;
@@ -175,391 +135,141 @@ h1 {
     flex: 1;
     text-align: center;
 }
-.round-item b { color: #f26d21; }
+.hud-item b { color: #f26d21; }
 
-.recipe-box {
-    background: rgba(87,42,124,0.4);
-    border: 2px dashed #f26d21;
-    border-radius: 14px;
-    padding: 10px 14px;
-    text-align: center;
-}
-.recipe-title {
+/* Блок подсказок */
+.hints-title {
     color: #f26d21;
-    font-size: 13px;
+    font-size: 12px;
     letter-spacing: 2px;
-    margin-bottom: 8px;
     text-shadow: 1px 1px 0 #000;
+    text-align: left;
+    margin-bottom: 4px;
 }
-.recipe-list {
+.hints-box {
+    background: rgba(15, 2, 25, 0.85);
+    border: 3px solid #f26d21;
+    border-radius: 14px;
+    padding: 12px 14px;
+    box-shadow: inset 0 0 20px rgba(242,109,33,0.2);
+    min-height: 140px;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+}
+.hint-line {
+    color: #fff;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    line-height: 1.4;
+    padding: 8px 10px;
+    background: rgba(87,42,124,0.4);
+    border-left: 3px solid #f26d21;
+    border-radius: 6px;
+    animation: hintAppear 0.5s ease;
+}
+@keyframes hintAppear {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+.hint-line .hint-num {
+    color: #f26d21;
+    font-weight: bold;
+    margin-right: 6px;
+}
+
+.empty-hint {
+    color: #666;
+    font-size: 12px;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Поле ввода */
+.input-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 8px;
 }
-.recipe-item {
-    color: #fff;
+.input-label {
+    color: #ccc;
     font-size: 12px;
-    letter-spacing: 0.5px;
-    padding: 6px 12px;
-    background: rgba(242,109,33,0.2);
-    border: 2px solid rgba(242,109,33,0.5);
-    border-radius: 10px;
-    transition: all 0.3s ease;
+    letter-spacing: 1px;
 }
-.recipe-item.done {
-    color: #4caf50;
-    border-color: #4caf50;
-    background: rgba(76,175,80,0.2);
-    text-decoration: line-through;
-    opacity: 0.7;
-}
-
-/* Котёл */
-.cauldron-area {
+.input-row {
     display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    padding: 6px 0 20px;
-    position: relative;
-    min-height: 240px;
+    gap: 6px;
+    width: 100%;
+    max-width: 380px;
 }
-
-.cauldron-wrap {
-    position: relative;
-    width: 260px;
-    height: 200px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    transition: transform 0.15s ease, filter 0.3s ease;
-    cursor: pointer;
-}
-
-.cauldron-body {
-    position: relative;
-    width: 200px;
-    height: 150px;
-    background: radial-gradient(
-        ellipse at 40% 25%,
-        #3d2a55 0%,
-        #1e0a30 40%,
-        #0d0218 100%
-    );
-    border-radius: 50% / 45%;
-    border: 4px solid #0a0210;
-    box-shadow:
-        inset 0 15px 30px rgba(0,0,0,0.95),
-        inset 0 -20px 40px rgba(87,42,124,0.35),
-        inset 15px 0 30px rgba(0,0,0,0.6),
-        inset -15px 0 30px rgba(0,0,0,0.6),
-        0 4px 20px rgba(0,0,0,0.8),
-        0 0 40px rgba(155,89,182,0.3);
-    overflow: hidden;
-    z-index: 2;
-}
-
-.cauldron-surface {
-    position: absolute;
-    top: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 170px;
-    height: 34px;
-    background: radial-gradient(
-        ellipse at center,
-        #8e44ad 0%,
-        #6a1b9a 40%,
-        #4a148c 70%,
-        #2a0845 100%
-    );
-    border-radius: 50%;
-    box-shadow:
-        inset 0 0 20px rgba(186,104,200,0.9),
-        0 0 30px rgba(155,89,182,0.6),
-        inset 0 -6px 10px rgba(0,0,0,0.5);
-    overflow: hidden;
-}
-.cauldron-surface::after {
-    content: '';
-    position: absolute;
-    inset: 4px 10px;
-    border-radius: 50%;
-    background: radial-gradient(
-        ellipse at 30% 30%,
-        rgba(255,255,255,0.25) 0%,
-        transparent 60%
-    );
-}
-
-.bubble {
-    position: absolute;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,204,0,0.95), rgba(155,89,182,0.7));
-    box-shadow: 0 0 10px rgba(255,204,0,0.8);
-    animation: bubbleFloat 2s ease-in infinite;
-}
-@keyframes bubbleFloat {
-    0% { transform: translateY(0) scale(0.5); opacity: 0; }
-    20% { opacity: 1; }
-    100% { transform: translateY(-50px) scale(1.3); opacity: 0; }
-}
-
-.cauldron-content {
-    position: absolute;
-    top: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 160px;
-    height: 45px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2px;
-    pointer-events: none;
-    z-index: 4;
-}
-.cauldron-content .ing {
+.answer-input {
+    font-family: 'Russo One', sans-serif;
     font-size: 18px;
-    animation: ingDrop 0.5s ease;
-    filter: drop-shadow(0 0 6px rgba(255,200,0,0.9));
+    text-align: center;
+    background: rgba(15, 2, 25, 0.9);
+    color: #f26d21;
+    border: 3px solid #f26d21;
+    border-radius: 10px;
+    padding: 10px 12px;
+    flex: 1;
+    outline: none;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 8px rgba(242,109,33,0.6);
+    min-width: 0;
 }
-@keyframes ingDrop {
-    0% { transform: translateY(-40px) scale(0.5) rotate(-180deg); opacity: 0; }
-    60% { transform: translateY(6px) scale(1.2); opacity: 1; }
-    100% { transform: translateY(0) scale(1) rotate(0); opacity: 1; }
+.answer-input:focus {
+    box-shadow: 0 0 20px rgba(242,109,33,0.7);
 }
-
-.cauldron-body::before,
-.cauldron-body::after {
-    content: '';
-    position: absolute;
-    top: 22px;
-    width: 26px;
-    height: 26px;
-    border: 4px solid #0a0210;
-    border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, #2a1538, #0a0210);
-    z-index: -1;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.8);
+.answer-input.correct {
+    border-color: #4caf50;
+    color: #4caf50;
+    box-shadow: 0 0 20px rgba(76,175,80,0.7);
+    text-shadow: 0 0 10px #4caf50;
 }
-.cauldron-body::before { left: -20px; }
-.cauldron-body::after { right: -20px; }
-
-.cauldron-fire {
-    position: relative;
-    display: flex;
-    gap: 2px;
-    margin-top: -10px;
-    z-index: 1;
-    font-size: 38px;
-    filter: drop-shadow(0 0 15px #ff5500) drop-shadow(0 0 30px #ff3300);
-    line-height: 1;
+.answer-input.wrong {
+    border-color: #ff3333;
+    color: #ff5555;
+    box-shadow: 0 0 20px rgba(255,51,51,0.7);
+    text-shadow: 0 0 10px #ff3333;
+    animation: shake 0.4s ease;
 }
-.cauldron-fire span {
-    display: inline-block;
-    animation: fireFlicker 0.4s ease-in-out infinite alternate;
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
 }
-.cauldron-fire span:nth-child(1) { animation-delay: 0s; }
-.cauldron-fire span:nth-child(2) { animation-delay: 0.15s; font-size: 46px; }
-.cauldron-fire span:nth-child(3) { animation-delay: 0.3s; }
-@keyframes fireFlicker {
-    from { transform: scale(1) translateY(0) rotate(-3deg); opacity: 0.85; }
-    to { transform: scale(1.15) translateY(-4px) rotate(3deg); opacity: 1; }
+.check-btn {
+    font-family: 'Russo One', sans-serif;
+    font-size: 13px;
+    background: #572a7c;
+    color: #f26d21;
+    border: 3px solid #f26d21;
+    padding: 10px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.25s ease;
+    text-shadow: 1px 1px 0 #000;
+    flex-shrink: 0;
 }
-
-.cauldron-wrap.bubbling { animation: cauldronBubble 0.4s ease; }
-@keyframes cauldronBubble {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.06); }
-}
-.cauldron-wrap.glow {
-    filter: drop-shadow(0 0 25px #ffcc00) drop-shadow(0 0 40px #f26d21);
-}
-.cauldron-wrap.over {
-    filter: drop-shadow(0 0 25px #f26d21);
+.check-btn:hover:not(:disabled) {
+    background: #f26d21;
+    color: #572a7c;
+    border-color: #572a7c;
     transform: scale(1.05);
 }
-.cauldron-wrap.explode { animation: cauldronExplode 0.5s ease; }
-@keyframes cauldronExplode {
-    0%, 100% { transform: scale(1) rotate(0); }
-    20% { transform: scale(1.1) rotate(-5deg); }
-    40% { transform: scale(1.1) rotate(5deg); }
-    60% { transform: scale(1.05) rotate(-3deg); }
-    80% { transform: scale(1.05) rotate(3deg); }
-}
-
-/* Панель ингредиентов */
-.ingredients-title {
-    color: #f26d21;
-    font-size: 12px;
-    letter-spacing: 2px;
-    margin-bottom: 6px;
-    text-shadow: 1px 1px 0 #000;
-}
-.ingredients-panel {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    padding: 12px 10px;
-    background: rgba(87,42,124,0.3);
-    border: 2px solid rgba(242,109,33,0.4);
-    border-radius: 12px;
-    min-height: 70px;
-}
-
-/* ===== БАНОЧКА С ЭТИКЕТКОЙ ===== */
-.ingredient {
-    position: relative;
-    width: 60px;
-    height: 76px;
-    cursor: grab;
-    transition: all 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    user-select: none;
-}
-
-/* Крышка */
-.jar-lid {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 10px;
-    background: linear-gradient(180deg, #6a4a2a 0%, #4a2f1a 50%, #2a1a0a 100%);
-    border-radius: 4px 4px 2px 2px;
-    box-shadow: inset 0 -1px 2px rgba(0,0,0,0.6), 0 1px 2px rgba(0,0,0,0.5);
-    z-index: 5;
-}
-/* Горлышко */
-.jar-neck {
-    position: absolute;
-    top: 8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 34px;
-    height: 8px;
-    background: rgba(200,180,220,0.35);
-    border: 1px solid rgba(200,180,220,0.5);
-    border-radius: 2px;
-    z-index: 4;
-}
-/* Стеклянная банка */
-.jar-body {
-    position: relative;
-    width: 56px;
-    height: 58px;
-    background: linear-gradient(
-        180deg,
-        rgba(200,180,220,0.35) 0%,
-        rgba(140,100,180,0.5) 40%,
-        rgba(87,42,124,0.7) 100%
-    );
-    border-radius: 10px 10px 14px 14px;
-    border: 2px solid rgba(200,180,220,0.6);
-    box-shadow:
-        inset -4px -4px 8px rgba(0,0,0,0.3),
-        inset 4px 4px 8px rgba(255,255,255,0.2),
-        0 0 8px rgba(155,89,182,0.5);
-    z-index: 1;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-/* Блик на стекле */
-.jar-body::before {
-    content: '';
-    position: absolute;
-    top: 5px;
-    left: 6px;
-    width: 10px;
-    height: 20px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 100%);
-    border-radius: 5px;
-    transform: rotate(-15deg);
-    pointer-events: none;
-    z-index: 4;
-}
-
-/* ===== ЖЁЛТАЯ ЭТИКЕТКА-ПОЛОСКА ===== */
-.note {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    height: 22px;
-    background: linear-gradient(180deg, #ffe94d 0%, #ffcc00 50%, #e6b800 100%);
-    box-shadow:
-        0 2px 4px rgba(0,0,0,0.5),
-        inset 0 -2px 3px rgba(0,0,0,0.15),
-        inset 0 2px 3px rgba(255,255,255,0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2;
-    transition: transform 0.2s ease;
-}
-/* Обрезанные края этикетки — эффект обхвата банки */
-.note::before,
-.note::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    background: rgba(0,0,0,0.2);
-}
-.note::before { left: 0; border-radius: 3px 0 0 3px; }
-.note::after { right: 0; border-radius: 0 3px 3px 0; }
-
-.note-emoji {
-    font-size: 18px;
-    line-height: 1;
-    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
-    animation: emojiFloat 2s ease-in-out infinite alternate;
-}
-@keyframes emojiFloat {
-    from { transform: translateY(0); }
-    to { transform: translateY(-1px); }
-}
-
-.ingredient:hover {
-    transform: translateY(-4px) scale(1.05);
-}
-.ingredient:hover .jar-body {
-    border-color: #f26d21;
-    box-shadow:
-        inset -4px -4px 8px rgba(0,0,0,0.3),
-        inset 4px 4px 8px rgba(255,255,255,0.2),
-        0 0 15px rgba(242,109,33,0.8);
-}
-.ingredient.selected .jar-body {
-    border-color: #fff;
-    box-shadow:
-        inset -4px -4px 8px rgba(0,0,0,0.3),
-        inset 4px 4px 8px rgba(255,255,255,0.3),
-        0 0 20px #fff;
-}
-.ingredient.selected {
-    transform: scale(1.1);
-}
-.ingredient.dragging {
-    opacity: 0.5;
-}
+.check-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .hint-msg {
     min-height: 18px;
     font-size: 12px;
     letter-spacing: 1px;
-    margin-top: 6px;
+    margin-top: 4px;
     color: #f26d21;
     text-shadow: 1px 1px 0 #000;
     transition: opacity 0.3s ease;
@@ -567,19 +277,16 @@ h1 {
 .hint-msg.good { color: #4caf50; text-shadow: 0 0 8px #4caf50, 1px 1px 0 #000; }
 .hint-msg.warn { color: #ff5555; text-shadow: 0 0 8px #ff5555, 1px 1px 0 #000; }
 
-.explosion-flash {
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(circle, rgba(255,80,0,0.7) 0%, rgba(255,0,0,0.3) 40%, transparent 70%);
-    pointer-events: none;
-    animation: flashAnim 0.5s ease-out forwards;
-    z-index: 100;
+/* Пульсация при угадывании */
+.correct-glow {
+    animation: correctGlow 1s ease 3;
 }
-@keyframes flashAnim {
-    0% { opacity: 1; }
-    100% { opacity: 0; }
+@keyframes correctGlow {
+    0%, 100% { box-shadow: inset 0 0 20px rgba(242,109,33,0.2); }
+    50% { box-shadow: inset 0 0 40px rgba(76,175,80,0.8), 0 0 30px rgba(76,175,80,0.8); }
 }
 
+/* Финальный экран */
 .end-screen {
     display: none;
     flex-direction: column;
@@ -589,6 +296,10 @@ h1 {
     animation: fadeIn 0.8s ease;
 }
 .end-screen h1 { font-size: 22px; line-height: 1.3; }
+.end-screen h1.lose {
+    color: #ff5555;
+    text-shadow: 2px 2px 0 #572a7c, 4px 4px 0 #000, 0 0 15px #ff5555;
+}
 .end-screen p {
     color: #fff; font-size: 13px;
     letter-spacing: 1px;
@@ -596,95 +307,25 @@ h1 {
     text-align: center;
 }
 .end-screen p.sub { color: #ccc; font-size: 12px; }
-.end-screen .score-big {
-    font-size: 50px;
-    margin: 6px 0;
-    filter: drop-shadow(0 0 20px #f26d21);
+.end-screen .word-big {
+    color: #f26d21;
+    font-size: 32px;
+    letter-spacing: 4px;
+    text-shadow: 0 0 20px #f26d21, 2px 2px 0 #000;
+    margin: 8px 0;
 }
 .end-screen p.final {
     color: #f26d21; font-size: 13px;
     text-shadow: 1px 1px 0 #000, 0 0 10px #f26d21;
 }
 
-.round-transition {
-    position: fixed;
-    inset: 0;
-    background: rgba(25,0,40,0.95);
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 200;
-    animation: fadeIn 0.4s ease;
-    text-align: center;
-    padding: 20px;
-}
-.round-transition.show { display: flex; }
-.round-transition h2 {
-    color: #f26d21;
-    font-size: 28px;
-    letter-spacing: 3px;
-    text-shadow: 2px 2px 0 #572a7c, 4px 4px 0 #000, 0 0 30px #f26d21;
-    margin-bottom: 12px;
-    animation: glow 1.5s ease-in-out infinite alternate;
-}
-.round-transition p {
-    color: #fff;
-    font-size: 16px;
-    letter-spacing: 1px;
-    text-shadow: 1px 1px 2px #000;
-}
-
-.timeout-screen {
-    position: fixed;
-    inset: 0;
-    background: rgba(80,0,0,0.9);
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 300;
-    animation: fadeIn 0.4s ease;
-    text-align: center;
-    padding: 20px;
-}
-.timeout-screen.show { display: flex; }
-.timeout-screen h2 {
-    color: #ff5555;
-    font-size: 32px;
-    letter-spacing: 3px;
-    text-shadow: 2px 2px 0 #000, 0 0 30px #ff5555;
-    margin-bottom: 12px;
-}
-.timeout-screen p {
-    color: #fff;
-    font-size: 16px;
-    letter-spacing: 1px;
-}
-
 @media (max-width: 500px) {
     h1 { font-size: 20px; }
-    .cauldron-wrap { width: 220px; height: 190px; }
-    .cauldron-body { width: 170px; height: 130px; }
-    .cauldron-surface { width: 145px; height: 28px; top: 10px; }
-    .cauldron-content { width: 140px; height: 40px; top: 5px; }
-    .cauldron-content .ing { font-size: 15px; }
-    .cauldron-fire { font-size: 32px; }
-    .cauldron-fire span:nth-child(2) { font-size: 38px; }
-    .cauldron-body::before, .cauldron-body::after { width: 22px; height: 22px; }
-    .cauldron-body::before { left: -17px; }
-    .cauldron-body::after { right: -17px; }
-    .ingredient { width: 52px; height: 66px; }
-    .jar-body { width: 48px; height: 50px; }
-    .jar-lid { width: 34px; height: 9px; }
-    .jar-neck { width: 28px; height: 7px; top: 7px; }
-    .note { height: 18px; }
-    .note-emoji { font-size: 15px; }
-    .recipe-item { font-size: 10px; padding: 4px 8px; }
+    .hint-line { font-size: 11px; padding: 6px 8px; }
+    .answer-input { font-size: 15px; padding: 8px 10px; }
+    .check-btn { font-size: 12px; padding: 8px 12px; }
     .end-screen h1 { font-size: 18px; }
-    .round-transition h2 { font-size: 22px; }
-    .timeout-screen h2 { font-size: 24px; }
-    .timer-text { font-size: 10px; }
+    .end-screen .word-big { font-size: 26px; }
 }
 </style>
 </head>
@@ -695,395 +336,202 @@ h1 {
 <div class="game-container" id="game-container">
 
     <div class="start-screen" id="start-screen">
-        <h1>Свари зелье</h1>
-        <p class="subtitle">3 раунда — 3 разных зелья. 30 секунд на каждое</p>
+        <h1>Угадай слово</h1>
+        <p class="subtitle">Хэллоуинская загадка</p>
         <div class="controls-box">
             <div class="ctrl-title">КАК ИГРАТЬ</div>
-            <div class="ctrl-line"><span>1.</span> Прочитай рецепт — ингредиенты подписаны словами</div>
-            <div class="ctrl-line"><span>2.</span> Угадай, какая баночка соответствует ингредиенту</div>
-            <div class="ctrl-line"><span>3.</span> Перетащи или кликни по котлу</div>
-            <div class="ctrl-line"><span>4.</span> Успей за 30 секунд — иначе раунд заново</div>
+            <div class="ctrl-line"><span>1.</span> Читай подсказки</div>
+            <div class="ctrl-line"><span>2.</span> Введи слово в поле и нажми «Ответить»</div>
+            <div class="ctrl-line"><span>3.</span> У тебя 5 попыток и 5 подсказок</div>
+            <div class="ctrl-line"><span>4.</span> Если не угадал — покажем правильный ответ</div>
         </div>
-        <button class="btn" onclick="startGame()">Начать варку</button>
+        <button class="btn" onclick="startGame()">Начать игру</button>
     </div>
 
     <div class="game-screen" id="game-screen">
-        <div class="timer-bar-wrap">
-            <div class="timer-bar" id="timer-bar"></div>
-            <div class="timer-text" id="timer-text">30 сек</div>
+        <div class="hud">
+            <div class="hud-item">Подсказки: <b><span id="hud-hints">0</span>/5</b></div>
+            <div class="hud-item">Попытки: <b><span id="hud-attempts">5</span>/5</b></div>
         </div>
 
-        <div class="round-info">
-            <div class="round-item">Раунд: <b><span id="hud-round">1</span>/3</b></div>
-            <div class="round-item">Зелье: <b><span id="hud-potion">Сна</span></b></div>
+        <div class="hints-title">ПОДСКАЗКИ</div>
+        <div class="hints-box" id="hints-box">
+            <div class="empty-hint">Нажми «Следующая подсказка», чтобы открыть первую</div>
         </div>
 
-        <div class="recipe-box">
-            <div class="recipe-title">РЕЦЕПТ</div>
-            <div class="recipe-list" id="recipe-list"></div>
-        </div>
+        <button class="btn" id="hint-btn" onclick="nextHint()">Следующая подсказка</button>
 
-        <div class="cauldron-area">
-            <div class="cauldron-wrap" id="cauldron-wrap">
-                <div class="cauldron-body">
-                    <div class="cauldron-surface" id="cauldron-surface"></div>
-                    <div class="cauldron-content" id="cauldron-content"></div>
-                </div>
-                <div class="cauldron-fire">
-                    <span>🔥</span><span>🔥</span><span>🔥</span>
-                </div>
+        <div class="input-area">
+            <div class="input-label">ТВОЙ ОТВЕТ:</div>
+            <div class="input-row">
+                <input type="text" class="answer-input" id="answer-input" placeholder="..." autocomplete="off" spellcheck="false" maxlength="20">
+                <button class="check-btn" id="check-btn" onclick="checkAnswer()">Ответить</button>
             </div>
         </div>
-
-        <div class="ingredients-title">ИНГРЕДИЕНТЫ</div>
-        <div class="ingredients-panel" id="ingredients-panel"></div>
 
         <div class="hint-msg" id="hint-msg"></div>
     </div>
 
     <div class="end-screen" id="end-screen">
-        <h1>ВСЕ ЗЕЛЬЯ СВАРЕНЫ! 🧪</h1>
-        <p class="sub">Ты прошёл все 3 раунда</p>
-        <div class="score-big">🍲✨🧙</div>
-        <p class="final">Не забудь отправить скрин в группу!</p>
-    </div>
-
-    <div class="round-transition" id="round-transition">
-        <h2 id="transition-title">РАУНД 1</h2>
-        <p id="transition-sub">Зелье сна</p>
-    </div>
-
-    <div class="timeout-screen" id="timeout-screen">
-        <h2>ВРЕМЯ ВЫШЛО!</h2>
-        <p id="timeout-sub">Раунд начнётся заново...</p>
+        <h1 id="end-title">ТЫ УГАДАЛ (-А)! 🎃</h1>
+        <p class="sub" id="end-sub">Это было сложное слово...</p>
+        <div class="word-big" id="end-word">НЕКРОМАНТ</div>
+        <p class="final" id="end-final">Не забудь отправить скрин в группу!</p>
     </div>
 
 </div>
 
 <script>
-    const ROUNDS = [
-        {
-            potionName: 'Зелье сна',
-            recipe: [
-                { id: 'eye',   name: 'Глаз тритона',      emoji: '👁' },
-                { id: 'wing',  name: 'Крыло летучей мыши', emoji: '🦇' },
-                { id: 'root',  name: 'Корень мандрагоры',  emoji: '🌱' }
-            ],
-            extras: [
-                { id: 'skull', emoji: '💀' },
-                { id: 'mush',  emoji: '🍄' },
-                { id: 'bone',  emoji: '🦴' }
-            ]
-        },
-        {
-            potionName: 'Зелье невидимости',
-            recipe: [
-                { id: 'web',    name: 'Паучий шёлк',    emoji: '🕸' },
-                { id: 'feather',name: 'Пёрышко совы',   emoji: '🪶' },
-                { id: 'fang',   name: 'Клык змеи',      emoji: '🐍' },
-                { id: 'moon',   name: 'Лунный камень',  emoji: '🌙' }
-            ],
-            extras: [
-                { id: 'candle', emoji: '🕯' },
-                { id: 'skull2', emoji: '💀' },
-                { id: 'key',    emoji: '🗝' }
-            ]
-        },
-        {
-            potionName: 'Проклятое зелье',
-            recipe: [
-                { id: 'book',  name: 'Проклятая книга', emoji: '📕' },
-                { id: 'skull3',name: 'Череп',           emoji: '💀' },
-                { id: 'bone2', name: 'Кость',           emoji: '🦴' },
-                { id: 'mush2', name: 'Поганка',         emoji: '🍄' },
-                { id: 'eye2',  name: 'Глаз василиска',  emoji: '👁' }
-            ],
-            extras: [
-                { id: 'spider', emoji: '🕷' },
-                { id: 'snake',  emoji: '🐍' },
-                { id: 'key2',   emoji: '🗝' }
-            ]
-        }
+    const ANSWER = 'НЕКРОМАНТ';
+
+    const HINTS = [
+        'Я не мёртв, но и не совсем живой.',
+        'Я говорю с теми, кто уже ушёл в иной мир.',
+        'Меня боятся даже скелеты в подземельях.',
+        'Моя старая книга всегда при мне.',
+        'Я не убиваю — я возвращаю к жизни.'
     ];
 
-    const ROUND_TIME = 30;
+    const MAX_ATTEMPTS = 5;
 
-    let currentRound = 0;
-    let currentStep = 0;
-    let selectedIngredient = null;
+    let currentHint = 0;
+    let attemptsLeft = MAX_ATTEMPTS;
     let gameActive = false;
-    let usedIds = new Set();
-    let timerInterval = null;
-    let timeLeft = ROUND_TIME;
-    let bubbleInterval = null;
 
-    const cauldronWrap = document.getElementById('cauldron-wrap');
-    const cauldronContentEl = document.getElementById('cauldron-content');
-    const cauldronSurface = document.getElementById('cauldron-surface');
-    const ingredientsPanel = document.getElementById('ingredients-panel');
-    const timerBar = document.getElementById('timer-bar');
-    const timerText = document.getElementById('timer-text');
+    const answerInput = document.getElementById('answer-input');
+    const hintsBox = document.getElementById('hints-box');
+    const hintBtn = document.getElementById('hint-btn');
+    const checkBtn = document.getElementById('check-btn');
 
     function startGame() {
-        currentRound = 0;
+        currentHint = 0;
+        attemptsLeft = MAX_ATTEMPTS;
+        gameActive = true;
+
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('end-screen').style.display = 'none';
         document.getElementById('game-screen').style.display = 'flex';
-        showRoundTransition(0, () => initRound());
+
+        hintsBox.innerHTML = '<div class="empty-hint">Нажми «Следующая подсказка», чтобы открыть первую</div>';
+        answerInput.value = '';
+        answerInput.classList.remove('correct', 'wrong');
+        answerInput.disabled = false;
+        checkBtn.disabled = false;
+        hintBtn.disabled = false;
+        hintBtn.style.display = 'inline-block';
+        hintBtn.textContent = 'Следующая подсказка';
+
+        document.getElementById('hud-hints').textContent = '0';
+        document.getElementById('hud-attempts').textContent = MAX_ATTEMPTS;
+        document.getElementById('hint-msg').textContent = '';
+        document.getElementById('hint-msg').className = 'hint-msg';
     }
 
-    function showRoundTransition(roundIdx, callback) {
-        const transition = document.getElementById('round-transition');
-        document.getElementById('transition-title').textContent = 'РАУНД ' + (roundIdx + 1);
-        document.getElementById('transition-sub').textContent = ROUNDS[roundIdx].potionName;
-        transition.classList.add('show');
-        setTimeout(() => {
-            transition.classList.remove('show');
-            if (callback) callback();
-        }, 1500);
-    }
-
-    function initRound() {
-        currentStep = 0;
-        selectedIngredient = null;
-        usedIds = new Set();
-        gameActive = true;
-
-        document.getElementById('hud-round').textContent = currentRound + 1;
-        document.getElementById('hud-potion').textContent = ROUNDS[currentRound].potionName.replace('Зелье ', '');
-
-        cauldronContentEl.innerHTML = '';
-        cauldronWrap.classList.remove('glow', 'bubbling', 'over', 'explode');
-
-        startBubbles();
-        renderRecipe();
-        renderIngredients();
-        startTimer();
-        showHint('Брось первый ингредиент в котёл', '');
-    }
-
-    function startTimer() {
-        if (timerInterval) clearInterval(timerInterval);
-        timeLeft = ROUND_TIME;
-        timerBar.classList.remove('danger');
-        updateTimerDisplay();
-
-        timerInterval = setInterval(() => {
-            if (!gameActive) return;
-            timeLeft--;
-            updateTimerDisplay();
-            if (timeLeft <= 10) timerBar.classList.add('danger');
-            if (timeLeft <= 0) {
-                clearInterval(timerInterval);
-                gameActive = false;
-                handleTimeout();
-            }
-        }, 1000);
-    }
-
-    function updateTimerDisplay() {
-        const pct = (timeLeft / ROUND_TIME) * 100;
-        timerBar.style.width = pct + '%';
-        timerText.textContent = timeLeft + ' сек';
-    }
-
-    function handleTimeout() {
-        if (bubbleInterval) clearInterval(bubbleInterval);
-        if (timerInterval) clearInterval(timerInterval);
-        const timeoutScreen = document.getElementById('timeout-screen');
-        timeoutScreen.classList.add('show');
-        document.getElementById('timeout-sub').textContent = 'Раунд ' + (currentRound + 1) + ' начнётся заново...';
-        setTimeout(() => {
-            timeoutScreen.classList.remove('show');
-            initRound();
-        }, 1800);
-    }
-
-    function startBubbles() {
-        cauldronSurface.innerHTML = '';
-        if (bubbleInterval) clearInterval(bubbleInterval);
-        bubbleInterval = setInterval(() => {
-            if (!gameActive) return;
-            const b = document.createElement('div');
-            b.className = 'bubble';
-            const size = 4 + Math.random() * 7;
-            b.style.width = size + 'px';
-            b.style.height = size + 'px';
-            b.style.left = (10 + Math.random() * 80) + '%';
-            b.style.bottom = '0';
-            b.style.animationDuration = (1.5 + Math.random() * 1.5) + 's';
-            cauldronSurface.appendChild(b);
-            setTimeout(() => b.remove(), 3000);
-        }, 300);
-    }
-
-    function renderRecipe() {
-        const recipe = ROUNDS[currentRound].recipe;
-        const list = document.getElementById('recipe-list');
-        list.innerHTML = '';
-        recipe.forEach((ing, idx) => {
-            const el = document.createElement('div');
-            el.className = 'recipe-item';
-            el.textContent = ing.name;
-            if (idx < currentStep) el.classList.add('done');
-            list.appendChild(el);
-        });
-    }
-
-    function renderIngredients() {
-        ingredientsPanel.innerHTML = '';
-        const recipe = ROUNDS[currentRound].recipe;
-        const extras = ROUNDS[currentRound].extras;
-        let all = [...recipe, ...extras];
-        all = shuffle(all);
-
-        all.forEach(ing => {
-            if (usedIds.has(ing.id)) return;
-
-            const el = document.createElement('div');
-            el.className = 'ingredient';
-            el.dataset.id = ing.id;
-
-            if (selectedIngredient === ing.id) el.classList.add('selected');
-
-            // Баночка с этикеткой-полоской
-            el.innerHTML = `
-                <div class="jar-lid"></div>
-                <div class="jar-neck"></div>
-                <div class="jar-body">
-                    <div class="note">
-                        <span class="note-emoji">${ing.emoji}</span>
-                    </div>
-                </div>
-            `;
-
-            el.setAttribute('draggable', 'true');
-            el.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('text/plain', ing.id);
-                el.classList.add('dragging');
-            });
-            el.addEventListener('dragend', () => el.classList.remove('dragging'));
-
-            el.addEventListener('click', () => {
-                if (!gameActive) return;
-                if (selectedIngredient === ing.id) selectedIngredient = null;
-                else selectedIngredient = ing.id;
-                renderIngredients();
-            });
-
-            ingredientsPanel.appendChild(el);
-        });
-    }
-
-    function shuffle(arr) {
-        const a = [...arr];
-        for (let i = a.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [a[i], a[j]] = [a[j], a[i]];
-        }
-        return a;
-    }
-
-    cauldronWrap.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        cauldronWrap.classList.add('over');
-    });
-    cauldronWrap.addEventListener('dragleave', () => {
-        cauldronWrap.classList.remove('over');
-    });
-    cauldronWrap.addEventListener('drop', (e) => {
-        e.preventDefault();
-        cauldronWrap.classList.remove('over');
-        const ingId = e.dataTransfer.getData('text/plain');
-        tryAddIngredient(ingId);
-    });
-
-    cauldronWrap.addEventListener('click', () => {
+    function nextHint() {
         if (!gameActive) return;
-        if (!selectedIngredient) {
-            showHint('Сначала выбери баночку внизу', 'warn');
+        if (currentHint >= HINTS.length) {
+            hintBtn.disabled = true;
+            showHintMsg('Больше подсказок нет', 'warn');
             return;
         }
-        tryAddIngredient(selectedIngredient);
-        selectedIngredient = null;
-    });
 
-    function tryAddIngredient(ingId) {
-        if (!gameActive) return;
-        const recipe = ROUNDS[currentRound].recipe;
-        const expected = recipe[currentStep];
-        if (!expected) return;
+        const empty = hintsBox.querySelector('.empty-hint');
+        if (empty) empty.remove();
 
-        if (ingId === expected.id) {
-            usedIds.add(ingId);
-            currentStep++;
+        const hintEl = document.createElement('div');
+        hintEl.className = 'hint-line';
+        hintEl.innerHTML = `<span class="hint-num">${currentHint + 1}.</span>${HINTS[currentHint]}`;
+        hintsBox.appendChild(hintEl);
 
-            const ingEl = document.createElement('div');
-            ingEl.className = 'ing';
-            ingEl.textContent = expected.emoji;
-            cauldronContentEl.appendChild(ingEl);
+        currentHint++;
+        document.getElementById('hud-hints').textContent = currentHint;
 
-            cauldronWrap.classList.add('bubbling', 'glow');
-            setTimeout(() => {
-                cauldronWrap.classList.remove('bubbling', 'glow');
-            }, 500);
-
-            renderRecipe();
-            renderIngredients();
-            selectedIngredient = null;
-
-            if (currentStep === recipe.length) {
-                showHint('Зелье готово!', 'good');
-                gameActive = false;
-                if (timerInterval) clearInterval(timerInterval);
-                setTimeout(() => {
-                    if (currentRound < ROUNDS.length - 1) {
-                        currentRound++;
-                        showRoundTransition(currentRound, () => initRound());
-                    } else {
-                        winGame();
-                    }
-                }, 900);
-            } else {
-                showHint('Верно! Следующий ингредиент', 'good');
-            }
-        } else {
-            explodeCauldron();
-            showHint('Неверно! Котёл взорвался', 'warn');
+        if (currentHint >= HINTS.length) {
+            hintBtn.disabled = true;
+            hintBtn.textContent = 'Все подсказки открыты';
         }
     }
 
-    function explodeCauldron() {
-        cauldronWrap.classList.add('explode');
-        setTimeout(() => cauldronWrap.classList.remove('explode'), 500);
-        const flash = document.createElement('div');
-        flash.className = 'explosion-flash';
-        document.body.appendChild(flash);
-        setTimeout(() => flash.remove(), 500);
+    function checkAnswer() {
+        if (!gameActive) return;
+
+        const raw = answerInput.value.trim().toUpperCase().replace(/\s+/g, '');
+        if (!raw) {
+            showHintMsg('Введи слово!', 'warn');
+            return;
+        }
+
+        const normalized = raw.replace(/Ё/g, 'Е');
+        const answerNorm = ANSWER.replace(/Ё/g, 'Е');
+
+        if (normalized === answerNorm) {
+            gameActive = false;
+            answerInput.classList.remove('wrong');
+            answerInput.classList.add('correct');
+            answerInput.disabled = true;
+            checkBtn.disabled = true;
+            hintBtn.disabled = true;
+            showHintMsg('Верно! Это НЕКРОМАНТ!', 'good');
+
+            hintsBox.classList.add('correct-glow');
+
+            setTimeout(() => {
+                document.getElementById('end-title').textContent = 'ТЫ УГАДАЛ (-А)! 🎃';
+                document.getElementById('end-title').classList.remove('lose');
+                document.getElementById('end-sub').textContent = 'Это было сложное слово...';
+                document.getElementById('end-word').textContent = ANSWER;
+                document.getElementById('game-screen').style.display = 'none';
+                document.getElementById('end-screen').style.display = 'flex';
+            }, 1200);
+        } else {
+            attemptsLeft--;
+            document.getElementById('hud-attempts').textContent = attemptsLeft;
+
+            answerInput.classList.remove('correct');
+            answerInput.classList.add('wrong');
+            setTimeout(() => answerInput.classList.remove('wrong'), 500);
+
+            if (attemptsLeft <= 0) {
+                gameActive = false;
+                answerInput.disabled = true;
+                checkBtn.disabled = true;
+                hintBtn.disabled = true;
+                showHintMsg('Попытки кончились! Это был НЕКРОМАНТ', 'warn');
+
+                setTimeout(() => {
+                    document.getElementById('end-title').textContent = 'ТЫ НЕ УГАДАЛ (-А)...';
+                    document.getElementById('end-title').classList.add('lose');
+                    document.getElementById('end-sub').textContent = 'Правильный ответ был:';
+                    document.getElementById('end-word').textContent = ANSWER;
+                    document.getElementById('game-screen').style.display = 'none';
+                    document.getElementById('end-screen').style.display = 'flex';
+                }, 1400);
+            } else {
+                showHintMsg('Неверно. Осталось попыток: ' + attemptsLeft, 'warn');
+            }
+        }
     }
 
-    function winGame() {
-        gameActive = false;
-        if (bubbleInterval) clearInterval(bubbleInterval);
-        if (timerInterval) clearInterval(timerInterval);
-        document.getElementById('game-screen').style.display = 'none';
-        document.getElementById('end-screen').style.display = 'flex';
-    }
+    answerInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && gameActive) checkAnswer();
+    });
+
+    answerInput.addEventListener('input', () => {
+        answerInput.classList.remove('wrong', 'correct');
+    });
 
     let hintTimeout = null;
-    function showHint(text, type) {
+    function showHintMsg(text, type) {
         const el = document.getElementById('hint-msg');
         el.textContent = text;
         el.className = 'hint-msg ' + (type || '');
         if (hintTimeout) clearTimeout(hintTimeout);
-        hintTimeout = setTimeout(() => { el.textContent = ''; }, 2500);
+        hintTimeout = setTimeout(() => { el.textContent = ''; }, 3000);
     }
 
     window.onload = () => {
         document.getElementById('game-screen').style.display = 'none';
         document.getElementById('end-screen').style.display = 'none';
-        document.getElementById('round-transition').classList.remove('show');
-        document.getElementById('timeout-screen').classList.remove('show');
     };
 </script>
 
